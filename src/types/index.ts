@@ -84,6 +84,7 @@ export type BonbastAPIResponse = {
 export type Change = "increased" | "decreased" | "nochange";
 
 export type Pair = {
+  name: string;
   code: string;
   sell: {
     value: string;
@@ -96,12 +97,14 @@ export type Pair = {
 };
 
 export type Single = {
+  name: string;
   code: string;
   value: string;
   change: Change;
 };
 
 export type Gold = {
+  name: string;
   value: string;
   change: Change;
 };

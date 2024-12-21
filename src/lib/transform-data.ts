@@ -1,3 +1,4 @@
+import { ASSETS_MAP } from "@/constants";
 import { BonbastAPIResponse, LatestPrices } from "@/types";
 
 function renameDataProperties(obj: BonbastAPIResponse): Record<string, string> {
@@ -53,6 +54,7 @@ function groupData(obj: Record<string, string>): LatestPrices {
       ) {
         result.coins.push({
           code: baseKey,
+          name: ASSETS_MAP[baseKey]?.name || baseKey,
           sell: {
             value: obj[key],
             change: "nochange",
@@ -66,6 +68,7 @@ function groupData(obj: Record<string, string>): LatestPrices {
         // Default behavior for other currencies
         result.currencies.push({
           code: baseKey,
+          name: ASSETS_MAP[baseKey]?.name || baseKey,
           sell: {
             value: obj[key],
             change: "nochange",
@@ -84,6 +87,7 @@ function groupData(obj: Record<string, string>): LatestPrices {
         case "gol18":
           result.golds.push({
             code: key,
+            name: ASSETS_MAP[key]?.name || key,
             value: obj[key],
             change: "nochange",
           });

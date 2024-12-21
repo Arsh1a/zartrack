@@ -1,5 +1,4 @@
 import { fetchLatest } from "@/lib/bonbast";
-import Assets from "./assets";
 
 export const revalidate = 45;
 
@@ -10,9 +9,5 @@ export default async function PortfolioPage() {
     throw new Error("Could not load prices");
   }
 
-  return (
-    <div>
-      <Assets initialData={data} />
-    </div>
-  );
+  return <div>asdsa</div>;
 }

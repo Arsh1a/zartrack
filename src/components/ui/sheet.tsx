@@ -63,7 +63,7 @@ const SheetContent = React.forwardRef<
       ref={ref}
       className={cn(
         sheetVariants({ side }),
-        "min-w-[90%] sm:min-w-[40%]",
+        "min-w-[90%] md:min-w-[70%] lg:min-w-[50%] xl:min-w-[40%]",
         className
       )}
       {...props}

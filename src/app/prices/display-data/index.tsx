@@ -17,8 +17,8 @@ export default function DisplayData({ initialData }: Props) {
           {error}
         </div>
       )}
-      <div className="flex gap-2 items-center justify-between">
-        <span>{data.last_modified} UTC</span>
+      <div className="flex gap-x-2 items-center flex-wrap justify-between">
+        <span>Updated at {data.last_modified} UTC</span>
         <span className="text-sm">
           All prices are in Iranian Toman (1 Toman = 10 Rials)
         </span>
