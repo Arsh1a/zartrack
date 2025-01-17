@@ -1,6 +1,6 @@
-import { fetchLatest } from "@/lib/bonbast";
+import { fetchLatest } from "@/lib/fetch-prices";
 
-export const revalidate = 45;
+export const revalidate = 60;
 
 export async function GET() {
   const data = await fetchLatest();

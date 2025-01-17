@@ -1,126 +1,27 @@
 import { ASSETS_MAP } from "@/constants";
-import { BonbastAPIResponse, LatestPrices } from "@/types";
+import { RawThidPartyAPIResponse, Single } from "@/types";
 
-function renameDataProperties(obj: BonbastAPIResponse): Record<string, string> {
-  const newObj: Record<string, string> = {};
+export function transformPrices(data: RawThidPartyAPIResponse) {
+  const transformSingle = (item: { name: string; price: number }): Single => {
+    const asset = ASSETS_MAP[item.name];
+    const code = asset ? asset.code : "";
+    const name = asset ? asset.name : "";
 
-  for (const key in obj) {
-    let newKey = key;
-
-    if (key === "azadi12") newKey = "azadi2";
-    else if (key === "emami12") newKey = "emami2";
-    else if (key === "azadi1_2") newKey = "azadi_half1";
-    else if (key === "azadi1_22") newKey = "azadi_half2";
-    else if (key === "azadi1_4") newKey = "azadi_quarter1";
-    else if (key === "azadi1_42") newKey = "azadi_quarter2";
-    else if (key === "azadi1g") newKey = "gerami1";
-    else if (key === "azadi1g2") newKey = "gerami2";
-
-    const value = obj[key as keyof BonbastAPIResponse];
-    newObj[newKey] = typeof value === "number" ? value.toString() : value;
-  }
-
-  return newObj;
-}
-
-function groupData(obj: Record<string, string>): LatestPrices {
-  const result: LatestPrices = {
-    currencies: [],
-    coins: [],
-    cryptos: [],
-    golds: [],
-    bourse: "",
-    created: "",
-    day: 0,
-    hour: "",
-    last_modified: "",
-    minute: "",
-    month: 0,
-    second: "",
-    weekday: "",
-    year: 0,
+    return {
+      name,
+      code,
+      value: item.price,
+    };
   };
 
-  for (const key in obj) {
-    // Handle currencies
-    if (key.endsWith("1") && obj.hasOwnProperty(key.slice(0, -1) + "2")) {
-      const baseKey = key.slice(0, -1);
-
-      // Check if the item should be in `coins` instead of `currencies`
-      if (
-        baseKey.startsWith("azadi") ||
-        baseKey.startsWith("emami") ||
-        baseKey === "gerami"
-      ) {
-        result.coins.push({
-          code: baseKey,
-          name: ASSETS_MAP[baseKey]?.name || baseKey,
-          sell: {
-            value: obj[key],
-            change: "nochange",
-          },
-          buy: {
-            value: obj[baseKey + "2"],
-            change: "nochange",
-          },
-        });
-      } else {
-        // Default behavior for other currencies
-        result.currencies.push({
-          code: baseKey,
-          name: ASSETS_MAP[baseKey]?.name || baseKey,
-          sell: {
-            value: obj[key],
-            change: "nochange",
-          },
-          buy: {
-            value: obj[baseKey + "2"],
-            change: "nochange",
-          },
-        });
-      }
-    } else if (!key.endsWith("2")) {
-      // Handling Single type fields explicitly
-      switch (key) {
-        case "ounce":
-        case "mithqal":
-        case "gol18":
-          result.golds.push({
-            code: key,
-            name: ASSETS_MAP[key]?.name || key,
-            value: obj[key],
-            change: "nochange",
-          });
-          break;
-        // Direct assignment for other fields
-        case "bourse":
-        case "created":
-        case "last_modified":
-        case "hour":
-        case "minute":
-        case "second":
-        case "weekday":
-          result[key] = obj[key];
-          break;
-        case "day":
-        case "month":
-        case "year":
-          result[key] = parseInt(obj[key], 10);
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  return result as LatestPrices;
+  return {
+    gold: data.gold.map((item) => transformSingle(item)),
+    currency: data.currency.map((item) => transformSingle(item)),
+    cryptocurrency: [],
+  };
 }
 
-export function normalizeData(data: BonbastAPIResponse): LatestPrices {
-  return groupData(renameDataProperties(data));
-}
-
-export function sortByNames<T extends { code: string }>(
+export function sortByCodes<T extends { code: string }>(
   data: T[],
   sortOrder: string[]
 ): T[] {
@@ -132,5 +33,86 @@ export function sortByNames<T extends { code: string }>(
     const aIndex = sortOrderMap.get(a.code.toLowerCase()) ?? Infinity;
     const bIndex = sortOrderMap.get(b.code.toLowerCase()) ?? Infinity;
     return aIndex - bIndex;
+  });
+}
+
+export function findAssetNameByCode(code: string) {
+  for (const key in ASSETS_MAP) {
+    if (ASSETS_MAP[key].code === code) {
+      return ASSETS_MAP[key].name;
+    }
+  }
+  return undefined;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function calculateGroupedSum<T extends Record<string, any>>(
+  items: T[],
+  combineKey: keyof T,
+  sumKeys: (keyof T)[]
+): Partial<T>[] {
+  const combinedMap: Record<string, Partial<T>> = {};
+
+  items.forEach((item) => {
+    const key = item[combineKey] as string;
+
+    if (!combinedMap[key]) {
+      combinedMap[key] = { [combineKey]: key } as Partial<T>;
+      sumKeys.forEach((sumKey) => {
+        combinedMap[key][sumKey] = 0 as unknown as T[keyof T];
+      });
+    }
+
+    sumKeys.forEach((sumKey) => {
+      const value = parseFloat(item[sumKey] as string) || 0;
+      combinedMap[key][sumKey] = ((combinedMap[key][sumKey] as number) +
+        value) as unknown as T[keyof T];
+    });
+  });
+
+  return Object.values(combinedMap);
+}
+
+export function calculateGroupedAverage<T>(
+  array: T[],
+  groupKey: keyof T,
+  valueKeys: (keyof T)[]
+): Array<{ [K in keyof T]?: T[K] } & { [key: string]: number }> {
+  // Create a grouped result with sum and count for each valueKey
+  const groupedResult = array.reduce((result, item) => {
+    const group = String(item[groupKey]); // Convert group key to string for indexing
+
+    if (!result[group]) {
+      result[group] = {
+        group: item[groupKey],
+        values: valueKeys.reduce((acc, key) => {
+          acc[key as string] = { sum: 0, count: 0 };
+          return acc;
+        }, {} as Record<string, { sum: number; count: number }>),
+      };
+    }
+
+    valueKeys.forEach((key) => {
+      const value = item[key] as number;
+      if (typeof value === "number") {
+        result[group].values[key as string].sum += value;
+        result[group].values[key as string].count += 1;
+      }
+    });
+
+    return result;
+  }, {} as Record<string, { group: T[keyof T]; values: Record<string, { sum: number; count: number }> }>);
+
+  // Transform groupedResult to an array of objects
+  return Object.values(groupedResult).map(({ group, values }) => {
+    const averages: Record<string, number> = {};
+    for (const key in values) {
+      const { sum, count } = values[key];
+      averages[key] = sum / count;
+    }
+
+    return { [groupKey]: group, ...averages } as { [K in keyof T]?: T[K] } & {
+      [key: string]: number;
+    };
   });
 }

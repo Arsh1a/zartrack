@@ -2,6 +2,8 @@ import React from "react";
 
 import ThemeToggle from "../theme-toggle";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { User } from "lucide-react";
 
 export default function Navbar() {
   return (
@@ -13,13 +15,17 @@ export default function Navbar() {
           </Link>
         </li>
         <li className="hover:opacity-60">
-          <Link href="/prices">Prices</Link>
-        </li>
-        <li className="hover:opacity-60">
           <Link href="/portfolio">Portfolio</Link>
         </li>
       </ul>
-      <ThemeToggle />
+      <div className="flex gap-2">
+        <Link href="/account">
+          <Button variant="outline" size="icon">
+            <User />
+          </Button>
+        </Link>
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
