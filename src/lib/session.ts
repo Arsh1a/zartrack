@@ -57,6 +57,7 @@ export async function createSession(
 
 export async function readSession(): Promise<Session | undefined> {
   const cookie = (await cookies()).get("session")?.value;
+  if (!cookie) return;
   const session = (await decrypt(cookie)) as Session | undefined;
 
   return session;

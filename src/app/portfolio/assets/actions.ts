@@ -10,7 +10,7 @@ import {
   EditAsset,
   editAssetSchema,
 } from "./schemas";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export async function addAssets(data: AddMultipleAssets) {
   const session = await readSession();
@@ -40,8 +40,7 @@ export async function addAssets(data: AddMultipleAssets) {
     }))
   );
 
-  revalidatePath("/portfolio");
-
+  revalidateTag("assets");
   return {
     message: "Asset added successfully",
   };
@@ -76,7 +75,7 @@ export async function editAsset(data: EditAsset) {
     })
     .where(and(eq(asset.id, result.data.id), eq(asset.userId, session.userId)));
 
-  revalidatePath("/portfolio");
+  revalidateTag("assets");
   return {
     message: "Asset updated successfully",
   };
@@ -105,7 +104,7 @@ export async function deleteAsset(id: string) {
     .delete(asset)
     .where(and(eq(asset.id, id), eq(asset.userId, session.userId)));
 
-  revalidatePath("/portfolio");
+  revalidateTag("assets");
   return {
     message: "Asset deleted successfully",
   };
