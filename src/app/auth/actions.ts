@@ -158,12 +158,15 @@ async function updateCreatedAccount(
 
   const { expiresAt, code } = generateOTPData();
 
-  await createOTP(updatedUser.id, { expiresAt, code });
   await createSession(updatedUser.id, updatedUser.email, false);
 
   if (isOTPExpired(otp.expiresAt)) {
     await updateOTP(updatedUser.id, { expiresAt, code });
     await sendOTPEmail(updatedUser.email, code);
+
+    return {
+      message: "New 6-digit OTP is sent to your email.",
+    };
   }
 
   return {
@@ -187,7 +190,6 @@ async function createAccount(email: string, password: string) {
   await createOTP(createdUser.id, { expiresAt, code });
   await createSession(createdUser.id, createdUser.email, false);
   await sendOTPEmail(createdUser.email, code);
-
   return {
     message:
       "Account created. An OTP has been sent to your email for verification.",

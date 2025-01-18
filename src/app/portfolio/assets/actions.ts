@@ -40,7 +40,7 @@ export async function addAssets(data: AddMultipleAssets) {
     }))
   );
 
-  revalidateTag("assets");
+  revalidateTag(`assets-${session.userId}`);
   return {
     message: "Asset added successfully",
   };
@@ -75,7 +75,7 @@ export async function editAsset(data: EditAsset) {
     })
     .where(and(eq(asset.id, result.data.id), eq(asset.userId, session.userId)));
 
-  revalidateTag("assets");
+  revalidateTag(`assets-${session.userId}`);
   return {
     message: "Asset updated successfully",
   };
@@ -104,7 +104,7 @@ export async function deleteAsset(id: string) {
     .delete(asset)
     .where(and(eq(asset.id, id), eq(asset.userId, session.userId)));
 
-  revalidateTag("assets");
+  revalidateTag(`assets-${session.userId}`);
   return {
     message: "Asset deleted successfully",
   };

@@ -6,14 +6,6 @@ import { eq } from "drizzle-orm";
 import PortfolioAssets from "./assets";
 import { unstable_cache } from "next/cache";
 
-const getAssets = unstable_cache(
-  async (userId: string) => {
-    return await db.select().from(asset).where(eq(asset.userId, userId));
-  },
-  ["assets"],
-  { revalidate: 3600, tags: ["assets"] }
-);
-
 export default async function PortfolioPage() {
   const prices = await fetchLatest();
   const session = await readSession();
@@ -22,7 +14,18 @@ export default async function PortfolioPage() {
     throw new Error("Session not found");
   }
 
-  const assets = await getAssets(session.userId);
+  const getAssets = unstable_cache(
+    async () => {
+      return await db
+        .select()
+        .from(asset)
+        .where(eq(asset.userId, session.userId));
+    },
+    [`assets-${session.userId}`],
+    { revalidate: 3600, tags: [`assets-${session.userId}`] }
+  );
+
+  const assets = await getAssets();
 
   if (!prices) {
     throw new Error("Could not load prices");
