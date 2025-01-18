@@ -6,8 +6,14 @@ import { eq } from "drizzle-orm";
 import PortfolioAssets from "./assets";
 import { unstable_cache } from "next/cache";
 
+const cachedFetchLatest = unstable_cache(
+  async () => await fetchLatest(),
+  ["fetch-latest"],
+  { revalidate: 59 }
+);
+
 export default async function PortfolioPage() {
-  const prices = await fetchLatest();
+  const prices = await cachedFetchLatest();
   const session = await readSession();
 
   if (!session) {
