@@ -7,7 +7,6 @@ import Golds from "./golds";
 
 interface Props {
   initialData: LatestPrices;
-  formattedDate: string;
 }
 
 export default function DisplayData({ initialData }: Props) {
