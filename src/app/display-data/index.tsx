@@ -2,14 +2,14 @@
 import { LatestPrices } from "@/types";
 import Currencies from "./currencies";
 import { useLatestPrices } from "@/hooks/useLatestPrices";
-import { formatDate } from "@/lib/utils";
 import Golds from "./golds";
 
 interface Props {
   initialData: LatestPrices;
+  formattedDate: string;
 }
 
-export default function DisplayData({ initialData }: Props) {
+export default function DisplayData({ initialData, formattedDate }: Props) {
   const { data, error } = useLatestPrices({ initialData });
 
   return (
@@ -20,7 +20,7 @@ export default function DisplayData({ initialData }: Props) {
         </div>
       )}
       <div className="flex gap-x-2 items-center flex-wrap justify-between">
-        <span>Updated at {formatDate(data.updatedAt)}</span>
+        <span>Updated at {formattedDate}</span>
         <span className="text-sm">
           All prices are in Iranian Toman (1 Toman = 10 Rials)
         </span>

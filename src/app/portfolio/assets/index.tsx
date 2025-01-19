@@ -9,14 +9,18 @@ import { Asset } from "@/db/schema";
 import { useLatestPrices } from "@/hooks/useLatestPrices";
 import { useMemo } from "react";
 import { CalculatedAsset } from "./schemas";
-import { formatDate } from "@/lib/utils";
 import { AssetCompounding } from "./asset-compounding";
 
 interface Props {
   initialPrices: LatestPrices;
   assets: Asset[];
+  formattedDate: string;
 }
-export default function PortfolioAssets({ assets, initialPrices }: Props) {
+export default function PortfolioAssets({
+  assets,
+  initialPrices,
+  formattedDate,
+}: Props) {
   const { data: prices } = useLatestPrices({ initialData: initialPrices });
 
   const pricesWithoutGoldOunce = [
@@ -61,7 +65,7 @@ export default function PortfolioAssets({ assets, initialPrices }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-x-2 items-center flex-wrap justify-between">
-        <span>Updated at {formatDate(prices.updatedAt)}</span>
+        <span>Updated at {formattedDate}</span>
         <span className="text-sm">
           All prices are in Iranian Toman (1 Toman = 10 Rials)
         </span>

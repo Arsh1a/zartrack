@@ -5,6 +5,7 @@ import { readSession } from "@/lib/session";
 import { eq } from "drizzle-orm";
 import PortfolioAssets from "./assets";
 import { unstable_cache } from "next/cache";
+import { formatDate } from "@/lib/utils";
 
 const cachedFetchLatest = unstable_cache(
   async () => await fetchLatest(),
@@ -37,5 +38,11 @@ export default async function PortfolioPage() {
     throw new Error("Could not load prices");
   }
 
-  return <PortfolioAssets assets={assets} initialPrices={prices} />;
+  return (
+    <PortfolioAssets
+      assets={assets}
+      initialPrices={prices}
+      formattedDate={formatDate(prices.updatedAt)}
+    />
+  );
 }

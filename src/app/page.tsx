@@ -1,17 +1,11 @@
 import { fetchLatest } from "@/lib/fetch-prices";
 import DisplayData from "./display-data";
-import { unstable_cache } from "next/cache";
+import { formatDate } from "@/lib/utils";
 
-const cachedFetchLatest = unstable_cache(
-  async () => await fetchLatest(),
-  ["fetch-latest"],
-  { revalidate: 59 }
-);
-
-export const revalidate = 45;
+export const revalidate = 55;
 
 export default async function HomePage() {
-  const data = await cachedFetchLatest();
+  const data = await fetchLatest();
 
   if (!data) {
     throw new Error("Could not load prices");
@@ -19,7 +13,10 @@ export default async function HomePage() {
 
   return (
     <div>
-      <DisplayData initialData={data} />
+      <DisplayData
+        initialData={data}
+        formattedDate={formatDate(data.updatedAt)}
+      />
     </div>
   );
 }
