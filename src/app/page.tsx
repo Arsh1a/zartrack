@@ -1,6 +1,5 @@
 import { fetchLatest } from "@/lib/fetch-prices";
 import DisplayData from "./display-data";
-import { formatDate } from "@/lib/utils";
 
 export const revalidate = 55;
 
@@ -13,10 +12,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <DisplayData
-        initialData={data}
-        formattedDate={formatDate(data.updatedAt)}
-      />
+      <DisplayData initialData={data} />
     </div>
   );
 }
