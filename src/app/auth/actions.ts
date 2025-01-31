@@ -16,10 +16,11 @@ import argon2 from "argon2";
 import { redirect } from "next/navigation";
 
 const resend = new Resend(process.env.RESEND_KEY);
+const resendEmail = process.env.RESEND_EMAIL;
 
 export async function sendOTPEmail(email: string, code: string) {
   await resend.emails.send({
-    from: "Zartrack <onboarding@resend.dev>",
+    from: `Zartrack <${resendEmail}>`,
     to: [email],
     subject: "Zartrack - OTP Login",
     react: EmailTemplate({ email: email, code: code }),
