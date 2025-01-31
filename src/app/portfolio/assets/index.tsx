@@ -67,7 +67,7 @@ export default function PortfolioAssets({ assets, initialPrices }: Props) {
         </span>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-4 w-full">
           <AddAsset prices={pricesWithoutGoldOunce} />
           <AssetSummary
             calculatedAssets={calculatedAssets}
