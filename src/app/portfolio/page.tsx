@@ -5,6 +5,13 @@ import { readSession } from "@/lib/session";
 import { eq } from "drizzle-orm";
 import PortfolioAssets from "./assets";
 import { unstable_cache } from "next/cache";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Portfolio | Zartrack",
+  description:
+    "Manage and monitor your asset portfolio with Zartrack. View real-time values, profit and loss percentages, and asset composition in an intuitive dashboard.",
+};
 
 export default async function PortfolioPage() {
   const prices = await fetchLatest();
