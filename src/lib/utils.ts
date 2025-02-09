@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,4 +35,15 @@ export function calculateAverage<T>(array: T[], key: keyof T): number {
   return (
     array.reduce((sum, item) => sum + (item[key] as number), 0) / array.length
   );
+}
+
+export function exportToCSV<T extends object>(
+  data: T[],
+  filename: string = "data.csv"
+) {
+  if (!data.length) return;
+
+  const csv = Papa.unparse(data);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  saveAs(blob, filename);
 }

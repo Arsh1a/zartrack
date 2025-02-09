@@ -6,6 +6,7 @@ import assetsTableColumn from "./assets-table-column";
 import { DataTable } from "@/components/ui/data-table";
 import { CalculatedAsset } from "./schemas";
 import { Single } from "@/types";
+import ExportAssetData from "./export-asset-data";
 
 interface Props {
   calculatedAssets: CalculatedAsset[];
@@ -25,7 +26,7 @@ export default function AssetsTable({ calculatedAssets, prices }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 items-start">
       <DataTable
         columns={assetsTableColumn(
           (id) => startTransition(() => handleRemove(id)),
@@ -33,6 +34,7 @@ export default function AssetsTable({ calculatedAssets, prices }: Props) {
         )}
         data={optimisticAssets}
       />
+      <ExportAssetData calculatedAssets={calculatedAssets} />
     </div>
   );
 }
