@@ -47,7 +47,6 @@ const CalendarPicker = ({
             selected={value}
             onSelect={onChange}
             disabled={disabledDates}
-            initialFocus
           />
         </PopoverContent>
       </Popover>

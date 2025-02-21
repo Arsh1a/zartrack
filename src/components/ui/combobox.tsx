@@ -54,7 +54,7 @@ const Combobox = ({
   const valLabel = items.find((item) => item.value === val)?.label;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
