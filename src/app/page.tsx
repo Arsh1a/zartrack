@@ -1,3 +1,4 @@
+"force-dynamic";
 import DisplayData from "./display-data";
 import axios from "axios";
 import { LatestPrices } from "@/types";
