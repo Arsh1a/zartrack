@@ -8,8 +8,8 @@ interface Props {
 }
 
 export default function DisplayAsset({ code, showCode = true }: Props) {
-  const IconComponent = ICONS_MAP[code.toLowerCase()];
-  const name = findAssetNameByCode(code.toLowerCase());
+  const IconComponent = ICONS_MAP[code];
+  const name = findAssetNameByCode(code);
 
   return (
     <div className="flex gap-1 items-center">

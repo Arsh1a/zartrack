@@ -1,17 +1,41 @@
 export type RawThidPartyAPIResponse = {
-  gold: {
+  gold: Array<{
+    date: string;
+    time: string;
+    time_unix: number;
+    symbol: string;
+    name_en: string;
     name: string;
     price: number;
-  }[];
-  currency: {
+    change_value: number;
+    change_percent: number;
+    unit: string;
+  }>;
+  currency: Array<{
+    date: string;
+    time: string;
+    time_unix: number;
+    symbol: string;
+    name_en: string;
     name: string;
-
     price: number;
-  }[];
-  cryptocurrency: {
+    change_value: number;
+    change_percent: number;
+    unit: string;
+  }>;
+  cryptocurrency: Array<{
+    date: string;
+    time: string;
+    time_unix: number;
+    symbol: string;
+    name_en: string;
     name: string;
-    price: number;
-  }[];
+    price: string;
+    change_percent: number;
+    market_cap: number;
+    unit: string;
+    description: string;
+  }>;
 };
 
 export type Single = {

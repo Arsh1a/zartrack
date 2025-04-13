@@ -8,19 +8,26 @@ interface Props {
 }
 
 export default function Golds({ data }: Props) {
-  const coinCodes = ["emami", "azadi", "gerami", "azadi_half", "azadi_quarter"];
-  const goldCodes = ["ounce", "mesghal", "gold18", "gold24"];
+  const coinCodes = [
+    "IR_COIN_EMAMI",
+    "IR_COIN_BAHAR",
+    "IR_COIN_1G",
+    "IR_COIN_HALF",
+    "IR_COIN_QUARTER",
+  ];
+  const goldCodes = ["XAUUSD", "IR_GOLD_MELTED", "IR_GOLD_18K", "IR_GOLD_24K"];
 
-  const gold18 = data.find((item) => item.code === "gold18");
+  const IR_GOLD_18K = data.find((item) => item.code === "IR_GOLD_18K");
   const coins = sortByCodes(
     data.filter((item) => coinCodes.includes(item.code)),
-    ["emami"]
+    ["IR_COIN_EMAMI"]
   );
 
   const bubbles = coinCodes.reduce((result, code) => {
     const value = data.find((item) => item.code === code)?.value ?? 0;
-    result[code] = gold18
-      ? coinsBubbles(gold18.value, { [code]: value })[code]
+
+    result[code] = IR_GOLD_18K
+      ? coinsBubbles(IR_GOLD_18K.value, { [code]: value })[code]
       : { value, percentage: 0 };
     return result;
   }, {} as Record<string, Bubble>);

@@ -2,9 +2,10 @@ import { ASSETS_MAP } from "@/constants";
 import { RawThidPartyAPIResponse, Single } from "@/types";
 
 export function transformPrices(data: RawThidPartyAPIResponse) {
-  const transformSingle = (item: { name: string; price: number }): Single => {
-    const asset = ASSETS_MAP[item.name];
-    const code = asset ? asset.code : "";
+  const transformSingle = (item: { symbol: string; price: number }): Single => {
+    const asset = ASSETS_MAP[item.symbol];
+
+    const code = item.symbol;
     const name = asset ? asset.name : "";
 
     return {
@@ -26,19 +27,19 @@ export function sortByCodes<T extends { code: string }>(
   sortOrder: string[]
 ): T[] {
   const sortOrderMap = new Map<string, number>(
-    sortOrder.map((name, index) => [name.toLowerCase(), index])
+    sortOrder.map((name, index) => [name, index])
   );
 
   return data.sort((a, b) => {
-    const aIndex = sortOrderMap.get(a.code.toLowerCase()) ?? Infinity;
-    const bIndex = sortOrderMap.get(b.code.toLowerCase()) ?? Infinity;
+    const aIndex = sortOrderMap.get(a.code) ?? Infinity;
+    const bIndex = sortOrderMap.get(b.code) ?? Infinity;
     return aIndex - bIndex;
   });
 }
 
 export function findAssetNameByCode(code: string) {
   for (const key in ASSETS_MAP) {
-    if (ASSETS_MAP[key].code === code) {
+    if (key === code) {
       return ASSETS_MAP[key].name;
     }
   }

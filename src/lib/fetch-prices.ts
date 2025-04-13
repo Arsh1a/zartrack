@@ -1,8 +1,7 @@
 import { LatestPrices, RawThidPartyAPIResponse } from "@/types";
 import { transformPrices } from "./transform-data";
 
-const API_URL =
-  "https://brsapi.ir/FreeTsetmcBourseApi/Api_Free_Gold_Currency.json";
+const API_URL = `https://brsapi.ir/Api/Market/Gold_Currency.php?key=${process.env.BRSAPI_API_KEY}`;
 
 export async function fetchLatest(): Promise<LatestPrices | null> {
   try {

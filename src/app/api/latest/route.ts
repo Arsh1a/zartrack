@@ -1,6 +1,6 @@
 import { fetchLatest } from "@/lib/fetch-prices";
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 export async function GET() {
   const data = await fetchLatest();

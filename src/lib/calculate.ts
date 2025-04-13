@@ -19,23 +19,23 @@ export function calculateTotalPnL(
   return (weightedPnL / totalMarketPrice) * 100;
 }
 
-export function coinsIntrinsicValues(gold18: number) {
-  const oneGramGold900Purity = gold18 ? (gold18 * 900) / 750 : NaN;
+export function coinsIntrinsicValues(IR_GOLD_18K: number) {
+  const oneGramGold900Purity = IR_GOLD_18K ? (IR_GOLD_18K * 900) / 750 : NaN;
 
   return {
-    emami: 8.133 * oneGramGold900Purity + 50000,
-    azadi: 8.133 * oneGramGold900Purity + 50000,
-    azadi_half: 4.066 * oneGramGold900Purity + 50000,
-    azadi_quarter: 2.033 * oneGramGold900Purity + 50000,
-    gerami: 1 * oneGramGold900Purity + 50000,
+    IR_COIN_EMAMI: 8.133 * oneGramGold900Purity + 50000,
+    IR_COIN_BAHAR: 8.133 * oneGramGold900Purity + 50000,
+    IR_COIN_HALF: 4.066 * oneGramGold900Purity + 50000,
+    IR_COIN_QUARTER: 2.033 * oneGramGold900Purity + 50000,
+    IR_COIN_1G: 1 * oneGramGold900Purity + 50000,
   };
 }
 
 export function coinsBubbles(
-  gold18: number,
+  IR_GOLD_18K: number,
   currentPrices: Record<string, number>
 ) {
-  const intrinsicValues = coinsIntrinsicValues(gold18);
+  const intrinsicValues = coinsIntrinsicValues(IR_GOLD_18K);
 
   return (
     Object.keys(currentPrices) as (keyof typeof intrinsicValues)[]
