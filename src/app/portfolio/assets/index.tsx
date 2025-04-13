@@ -71,7 +71,7 @@ export default function PortfolioAssets({ assets, initialPrices }: Props) {
           <AddAsset prices={pricesWithoutGoldOunce} />
           <AssetSummary
             calculatedAssets={calculatedAssets}
-            usd={prices.currency.find((item) => item.code === "usd")?.value}
+            usd={prices.currency.find((item) => item.code === "USD")?.value}
           />
         </div>
         <AssetCompounding calculatedAssets={calculatedAssets} />
