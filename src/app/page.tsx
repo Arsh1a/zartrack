@@ -1,13 +1,13 @@
-"force-dynamic";
+export const dynamic = "force-dynamic";
+
 import DisplayData from "./display-data";
-import axios from "axios";
 import { LatestPrices } from "@/types";
 
 export default async function HomePage() {
-  const data = await axios.get(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/latest`
   );
-  const prices = data.data as LatestPrices;
+  const prices = (await response.json()) as LatestPrices;
   if (!prices) {
     throw new Error("Could not load prices");
   }
