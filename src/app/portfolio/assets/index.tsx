@@ -7,16 +7,18 @@ import AssetSummary from "./asset-summary";
 import AssetsTable from "./assets-table";
 import { Asset } from "@/db/schema";
 import { useLatestPrices } from "@/hooks/useLatestPrices";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CalculatedAsset } from "./schemas";
 import { formatDate } from "@/lib/utils";
 import { AssetCompounding } from "./asset-compounding";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   initialPrices: LatestPrices;
   assets: Asset[];
 }
 export default function PortfolioAssets({ assets, initialPrices }: Props) {
+  const [groupUp, setGroupUp] = useState(false);
   const { data: prices } = useLatestPrices({ initialData: initialPrices });
 
   const pricesWithoutGoldOunce = [
@@ -58,6 +60,36 @@ export default function PortfolioAssets({ assets, initialPrices }: Props) {
     });
   }, [assets, prices]);
 
+  const aggregatedAssets = useMemo(() => {
+    const aggregationMap = new Map<string, CalculatedAsset>();
+
+    calculatedAssets.forEach((asset) => {
+      const existing = aggregationMap.get(asset.code);
+      if (existing) {
+        const totalAmount = Number(existing.amount) + Number(asset.amount);
+        const totalCost = existing.totalCost + asset.totalCost;
+        const totalMarketPrice =
+          (existing.totalMarketPrice || 0) + (asset.totalMarketPrice || 0);
+        const profitAndLoss = totalMarketPrice - totalCost;
+
+        aggregationMap.set(asset.code, {
+          ...existing,
+          amount: totalAmount.toString(),
+          totalCost,
+          totalMarketPrice,
+          profitAndLoss,
+          profitAndLossPercentage: profitAndLoss
+            ? (profitAndLoss / totalCost) * 100
+            : null,
+        });
+      } else {
+        aggregationMap.set(asset.code, { ...asset });
+      }
+    });
+
+    return Array.from(aggregationMap.values());
+  }, [calculatedAssets]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-x-2 items-center flex-wrap justify-between">
@@ -79,8 +111,15 @@ export default function PortfolioAssets({ assets, initialPrices }: Props) {
           <AssetComposition calculatedAssets={calculatedAssets} />
         </div>
       </div>
+      <Button
+        className="self-start"
+        variant="outline"
+        onClick={() => setGroupUp((prev) => !prev)}
+      >
+        {groupUp ? "Show all assets" : "Group up assets"}
+      </Button>
       <AssetsTable
-        calculatedAssets={calculatedAssets}
+        calculatedAssets={groupUp ? aggregatedAssets : calculatedAssets}
         prices={pricesWithoutGoldOunce}
       />
     </div>
