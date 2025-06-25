@@ -1,18 +1,22 @@
 import { LatestPrices, RawThidPartyAPIResponse } from "@/types";
 import { transformPrices } from "./transform-data";
+import { request } from "undici";
 
 const API_URL = `https://brsapi.ir/Api/Market/Gold_Currency.php?key=${process.env.BRSAPI_API_KEY}`;
 
 export async function fetchLatest(): Promise<LatestPrices | null> {
   try {
-    const response = await fetch(API_URL);
+    const { body } = await request(API_URL, {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      dispatcher: new (require("undici").Agent)({
+        connect: {
+          rejectUnauthorized: false, // WARNING: disables SSL check
+        },
+      }),
+    });
 
-    if (!response.ok) {
-      console.error(`HTTP Error: ${response.status}`);
-      return null;
-    }
-
-    const data = (await response.json()) as RawThidPartyAPIResponse;
+    const raw = await body.json();
+    const data = raw as RawThidPartyAPIResponse;
     const prices = transformPrices(data);
     return { ...prices, updatedAt: new Date().toISOString() };
   } catch (error) {
